@@ -22,6 +22,15 @@ class PerformanceVisualizer:
     def __init__(self, output_dir: str | Path = "visualizations") -> None:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.jpg_output_dir = self.output_dir.parent / "performance_results_jpgs"
+        self.jpg_output_dir.mkdir(parents=True, exist_ok=True)
+
+    def _save_figure(self, fig: Figure, base_name: str) -> None:
+        """Save each chart as both PNG and JPG outputs."""
+        png_path = self.output_dir / f"{base_name}.png"
+        jpg_path = self.jpg_output_dir / f"{base_name}.jpg"
+        fig.savefig(png_path, dpi=300, bbox_inches='tight')
+        fig.savefig(jpg_path, dpi=300, bbox_inches='tight')
 
     def visualize_benchmarks(self, benchmark_results: Dict[str, Any]) -> None:
         """
@@ -89,8 +98,8 @@ class PerformanceVisualizer:
         ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda y, _: '{:.4f}'.format(y)))
 
         plt.tight_layout()
-        filename = f"{self.output_dir}/performance_{operation.lower().replace(' ', '_')}.png"
-        plt.savefig(filename, dpi=300, bbox_inches='tight')
+        base_name = f"performance_{operation.lower().replace(' ', '_')}"
+        self._save_figure(fig, base_name)
         plt.close()
 
     def _plot_memory_usage(self, sizes: List[int], bplus_memory: List[float], brute_memory: List[float]) -> None:
@@ -107,8 +116,7 @@ class PerformanceVisualizer:
         ax.grid(True, alpha=0.3, linestyle='--')
 
         plt.tight_layout()
-        filename = f"{self.output_dir}/performance_memory_usage.png"
-        plt.savefig(filename, dpi=300, bbox_inches='tight')
+        self._save_figure(fig, "performance_memory_usage")
         plt.close()
 
     def _plot_combined_comparison(
@@ -148,8 +156,7 @@ class PerformanceVisualizer:
             ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda y, _: '{:.4f}'.format(y)))
 
         plt.tight_layout()
-        filename = f"{self.output_dir}/performance_combined_comparison.png"
-        plt.savefig(filename, dpi=300, bbox_inches='tight')
+        self._save_figure(fig, "performance_combined_comparison")
         plt.close()
 
     def _plot_performance_ratio(
@@ -190,8 +197,7 @@ class PerformanceVisualizer:
         ax.grid(True, alpha=0.3, linestyle='--')
 
         plt.tight_layout()
-        filename = f"{self.output_dir}/performance_speedup_ratio.png"
-        plt.savefig(filename, dpi=300, bbox_inches='tight')
+        self._save_figure(fig, "performance_speedup_ratio")
         plt.close()
 
     def save_results_to_json(self, benchmark_results: Dict[str, Any], filename: str = "benchmark_results.json") -> None:

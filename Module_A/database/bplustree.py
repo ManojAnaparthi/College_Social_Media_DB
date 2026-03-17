@@ -389,18 +389,30 @@ def main() -> None:
 
     dot = tree.visualize_tree()
 
+    # Build a second, slightly larger demo tree for an additional visualization.
+    larger_tree = BPlusTree(order=4)
+    for key in [15, 3, 8, 22, 7, 30, 1, 12, 18, 25, 5, 10, 2, 4, 6, 9, 11, 13, 14, 16, 17, 19, 20, 21, 23, 24, 26, 27]:
+        larger_tree.insert(key, f"user_{key}")
+    larger_dot = larger_tree.visualize_tree()
+
     output_dir = Path(__file__).resolve().parent / "visualizations"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_base = output_dir / "bplustree_demo"
+    larger_output_base = output_dir / "bplustree_demo_large"
 
     try:
         rendered_path = dot.render(filename=str(output_base), format="png", cleanup=True)
+        rendered_larger_path = larger_dot.render(filename=str(larger_output_base), format="png", cleanup=True)
         print(f"B+ tree visualization generated: {rendered_path}")
+        print(f"Larger B+ tree visualization generated: {rendered_larger_path}")
     except Exception as exc:
         dot_path = output_base.with_suffix(".dot")
+        larger_dot_path = larger_output_base.with_suffix(".dot")
         dot.save(filename=str(dot_path))
+        larger_dot.save(filename=str(larger_dot_path))
         print(f"Could not render PNG automatically: {exc}")
         print(f"DOT source saved at: {dot_path}")
+        print(f"Larger DOT source saved at: {larger_dot_path}")
 
 
 if __name__ == "__main__":
