@@ -3,27 +3,41 @@
 ## Folder Structure
 
 ```text
-College_Social_Media_DB/
-	.gitignore
-	README.md
-	Module_A/
-		requirements.txt
-		report.ipynb
-		database/
-			__init__.py
-			bplustree.py
-			bruteforce.py
-			table.py
-			db_manager.py
-			performance.py
-			run_performance_tests.py
-			visualizations_generator.py
-			performance_results_jpgs/
-			visualizations/
-	Module_B/
-		app/
-		sql/
-		requirements.txt
+DB_A2/
+|-- .gitignore
+|-- README.md
+|-- csmdb_venv/
+|-- Module_A/
+|   |-- requirements.txt
+|   |-- report.ipynb
+|   `-- database/
+|       |-- __init__.py
+|       |-- bplustree.py
+|       |-- bruteforce.py
+|       |-- table.py
+|       |-- db_manager.py
+|       |-- performance.py
+|       |-- run_performance_tests.py
+|       |-- visualizations_generator.py
+|       |-- performance_results_jpgs/
+|       `-- visualizations/
+`-- Module_B/
+    |-- requirements.txt
+    |-- app/
+    |   |-- main.py
+    |   |-- database.py
+    |   |-- test_db.py
+    |   `-- static/
+    |       |-- login.html
+    |       |-- portfolio.html
+    |       |-- create-post.html
+    |       |-- posts.html
+    |       |-- app.js
+    |       `-- styles.css
+    |-- sql/
+    |   |-- schema.sql
+    |   `-- sample_data.sql
+    `-- logs/
 ```
 
 ## Setup
@@ -135,3 +149,136 @@ print(db.list_tables())
 
 - Primary key type is integer (`int`) to match B+ Tree indexing.
 - This layer is in-memory only (no persistence yet).
+
+## Module B: Local API, UI, and Security (SubTask 1 and 2)
+
+This section documents the implementation status for Module B SubTask 1 and SubTask 2.
+
+### Scope Covered
+
+- SubTask 1: Local environment setup and core/project data integrity
+- SubTask 2: Session-validated APIs and web UI for CRUD + member portfolio with restricted access
+
+### Module B Structure
+
+```text
+Module_B/
+|-- requirements.txt
+|-- app/
+|   |-- main.py              # FastAPI app, auth/session, portfolio, post/comment CRUD
+|   |-- database.py          # MySQL connection helper
+|   |-- test_db.py           # DB connectivity smoke test
+|   `-- static/
+|       |-- login.html       # Login page
+|       |-- portfolio.html   # Portfolio page with member profile lookup
+|       |-- create-post.html # Dedicated create post page
+|       |-- posts.html       # Dedicated posts listing page
+|       |-- app.js           # Frontend logic and navigation
+|       `-- styles.css       # Shared styles
+|-- sql/
+|   |-- schema.sql           # Core + project table schema with FK constraints
+|   `-- sample_data.sql      # Demo dataset
+`-- logs/
+```
+
+### Setup (Module B)
+
+1. Install Module B dependencies:
+
+```bash
+csmdb_venv\Scripts\python.exe -m pip install -r Module_B/requirements.txt
+```
+
+2. Create schema and load sample data in local MySQL:
+
+```sql
+SOURCE Module_B/sql/schema.sql;
+SOURCE Module_B/sql/sample_data.sql;
+```
+
+3. Run API server:
+
+```bash
+cd Module_B/app
+csmdb_venv\Scripts\python.exe -m uvicorn main:app --reload --port 8001
+```
+
+4. Open UI:
+
+- http://127.0.0.1:8001/
+
+### SubTask 1: Local Environment Setup and Data Integrity
+
+Implemented:
+
+- Core identity/auth separation:
+	- `Member` table stores profile/core member data.
+	- `AuthCredential` stores login credentials (linked 1:1 to `Member`).
+- Project-specific tables (`Post`, `Comment`, `Follow`, `GroupMember`, etc.) are separated from credential storage.
+- Referential integrity is enforced through foreign keys with cascades.
+- Schema includes business-rule triggers and consistency constraints.
+
+Evidence in code:
+
+- `Module_B/sql/schema.sql`:
+	- `CREATE TABLE Member`
+	- `CREATE TABLE AuthCredential` with `FOREIGN KEY (MemberID) REFERENCES Member(MemberID) ON DELETE CASCADE`
+	- Project tables with `FOREIGN KEY ... ON DELETE CASCADE`
+
+### SubTask 2: API and UI Development
+
+Implemented APIs (session-aware):
+
+- Auth/session:
+	- `POST /login`
+	- `GET /isAuth`
+	- `POST /logout`
+- Portfolio:
+	- `GET /portfolio/{member_id}`
+	- `PUT /portfolio/{member_id}`
+- Project table CRUD (`Post`):
+	- `POST /posts`
+	- `GET /posts`
+	- `GET /posts/{post_id}`
+	- `PUT /posts/{post_id}`
+	- `DELETE /posts/{post_id}`
+- Additional project CRUD (`Comment`):
+	- `POST /posts/{post_id}/comments`
+	- `GET /posts/{post_id}/comments`
+	- `PUT /comments/{comment_id}`
+	- `DELETE /comments/{comment_id}`
+
+Implemented web UI pages:
+
+- `login.html`: authentication page
+- `portfolio.html`: own portfolio + restricted member profile lookup by MemberID
+- `create-post.html`: dedicated create-post form
+- `posts.html`: dedicated all-posts listing with edit/delete controls
+
+Session validation behavior:
+
+- Protected APIs are guarded using local JWT session validation dependency.
+- UI stores session locally and redirects unauthenticated users to login.
+
+Member Portfolio access restriction behavior:
+
+- Only authenticated users can access portfolio pages/endpoints.
+- Users can view:
+	- their own profile
+	- admin-authorized profiles
+	- profiles permitted by access rule logic in backend
+- Unauthorized profile requests return permission errors and are shown clearly in UI.
+
+### Requirement-to-Implementation Mapping
+
+- "Develop web-based UI and local APIs for CRUD on project-specific tables":
+	- Done via Post and Comment API endpoints + dedicated UI pages.
+- "Ensure every API call validates user session via local auth":
+	- Done for protected business endpoints through token validation dependency.
+- "Member Portfolio with authenticated and permission-restricted viewing":
+	- Done via portfolio endpoints and UI lookup workflow with backend authorization checks.
+
+### Notes for Demo
+
+- Recommended login with sample data uses email from `sample_data.sql` and placeholder password logic configured in app for demo hashes.
+- Demonstrate both permitted and denied portfolio/profile access in UI for clear evaluation evidence.

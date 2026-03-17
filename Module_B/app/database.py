@@ -5,7 +5,7 @@ import os
 # Database configuration - in a real app, use environment variables
 DB_HOST = "localhost"
 DB_USER = "root"          # Replace with your MySQL username
-DB_PASSWORD = "Password"  # Replace with your MySQL password
+DB_PASSWORD = "password"  # Replace with your MySQL password
 DB_NAME = "college_social_media"
 
 def get_db_connection():

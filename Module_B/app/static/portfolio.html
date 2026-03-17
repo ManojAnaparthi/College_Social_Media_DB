@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio | College Social Media</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body data-page="portfolio">
+  <header class="topbar">
+    <div class="brand">College Social Media Platform</div>
+    <button id="menu-toggle" class="hamburger" aria-label="Open navigation">☰</button>
+    <nav id="mobile-nav" class="mobile-nav hidden">
+      <a href="/static/portfolio.html" class="nav-link">Portfolio</a>
+      <a href="/static/create-post.html" class="nav-link">Create Post</a>
+      <a href="/static/posts.html" class="nav-link">Posts</a>
+      <button id="logout-btn" class="nav-logout" type="button">Logout</button>
+    </nav>
+  </header>
+
+  <main class="single-column">
+    <section class="card">
+      <h2>My Portfolio</h2>
+      <div id="portfolio-view" class="panel"></div>
+
+      <h3>View Member Profile</h3>
+      <form id="member-view-form">
+        <label>Member ID</label>
+        <input type="number" id="member_id_lookup" min="1" required />
+        <button type="submit">View Profile</button>
+      </form>
+      <div id="member-view-status" class="status"></div>
+      <div id="member-portfolio-view" class="panel hidden"></div>
+
+      <h3>Update Portfolio</h3>
+      <form id="portfolio-form">
+        <label>Bio</label>
+        <textarea id="bio" rows="3"></textarea>
+
+        <label>Contact Number</label>
+        <input type="text" id="contact_number" />
+
+        <label>Department</label>
+        <input type="text" id="department" />
+
+        <button type="submit">Update Portfolio</button>
+      </form>
+      <div id="portfolio-status" class="status"></div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

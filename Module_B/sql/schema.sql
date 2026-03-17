@@ -3,6 +3,9 @@
 -- CS 432 - Databases Assignment 1
 -- ============================================================================
 
+CREATE DATABASE IF NOT EXISTS college_social_media;
+USE college_social_media;
+
 -- Drop existing tables if they exist (in reverse order to respect foreign keys)
 DROP TABLE IF EXISTS ActivityLog;
 DROP TABLE IF EXISTS Notification;
