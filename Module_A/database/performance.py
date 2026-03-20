@@ -12,9 +12,11 @@ from .bruteforce import BruteForceDB
 
 @dataclass
 class BenchmarkConfig:
-    sizes: Tuple[int, ...] = tuple(range(100, 10001, 1000))  # 100, 1100, 2100, ..., 10000
+    sizes: Tuple[int, ...] = tuple(range(100, 100001, 10000))  # 100, 10100, ..., 90100
     seed: int = 42
     bplustree_order: int = 4
+    show_progress: bool = True
+    progress_bar_width: int = 28
 
 
 class PerformanceAnalyzer:
@@ -26,8 +28,19 @@ class PerformanceAnalyzer:
     def run_all_benchmarks(self) -> Dict[str, Any]:
         random.seed(self.config.seed)
         results: List[Dict[str, Any]] = []
+        total_sizes = len(self.config.sizes)
+        overall_start = time.perf_counter()
+        completed_size_times: List[float] = []
 
-        for size in self.config.sizes:
+        if self.config.show_progress:
+            print(f"[Benchmark] Starting {total_sizes} dataset sizes")
+            print("[Benchmark] ETA becomes more accurate after the first size completes")
+
+        for index, size in enumerate(self.config.sizes, start=1):
+            size_start = time.perf_counter()
+            if self.config.show_progress:
+                print(f"\n[Size {index}/{total_sizes}] N={size} -> running B+ Tree and Brute Force stages")
+
             keys = random.sample(range(size * 20), size)
             values = [f"v_{k}" for k in keys]
 
@@ -51,6 +64,8 @@ class PerformanceAnalyzer:
                 delete_keys,
                 range_windows,
                 random_workload,
+                engine_name="B+ Tree",
+                size=size,
             )
 
             brute_metrics = self._benchmark_structure(
@@ -61,6 +76,8 @@ class PerformanceAnalyzer:
                 delete_keys,
                 range_windows,
                 random_workload,
+                engine_name="Brute Force",
+                size=size,
             )
 
             results.append(
@@ -71,11 +88,29 @@ class PerformanceAnalyzer:
                 }
             )
 
+            size_elapsed = time.perf_counter() - size_start
+            completed_size_times.append(size_elapsed)
+
+            elapsed = time.perf_counter() - overall_start
+            avg_size_time = sum(completed_size_times) / len(completed_size_times)
+            remaining_sizes = total_sizes - index
+            eta_seconds = avg_size_time * remaining_sizes
+
+            if self.config.show_progress:
+                bar = self._render_progress_bar(index / total_sizes)
+                print(
+                    f"[Progress] {bar} {index}/{total_sizes} sizes | "
+                    f"last={self._format_duration(size_elapsed)} | "
+                    f"elapsed={self._format_duration(elapsed)} | "
+                    f"eta={self._format_duration(eta_seconds)}"
+                )
+
         return {
             "config": {
                 "sizes": list(self.config.sizes),
                 "seed": self.config.seed,
                 "bplustree_order": self.config.bplustree_order,
+                "show_progress": self.config.show_progress,
             },
             "results": results,
         }
@@ -111,13 +146,42 @@ class PerformanceAnalyzer:
         delete_keys: List[int],
         range_windows: List[Tuple[int, int]],
         random_workload: List[Tuple[str, Any]],
+        engine_name: str,
+        size: int,
     ) -> Dict[str, Any]:
+        structure_start = time.perf_counter()
+
         insert_time = self._time_insert(factory, keys, values)
+        self._print_stage(engine_name, size, "insert", insert_time)
+
         search_time = self._time_search(factory, keys, values, search_keys)
+        self._print_stage(engine_name, size, "search", search_time)
+
         delete_time = self._time_delete(factory, keys, values, delete_keys)
+        self._print_stage(engine_name, size, "delete", delete_time)
+
         range_time = self._time_range(factory, keys, values, range_windows)
+        self._print_stage(engine_name, size, "range_query", range_time)
+
         random_time = self._time_random_workload(factory, random_workload)
+        self._print_stage(engine_name, size, "random_workload", random_time)
+
+        memory_start = time.perf_counter()
         peak_memory = self._measure_peak_memory(factory, keys, values)
+        memory_time = time.perf_counter() - memory_start
+        self._print_stage(
+            engine_name,
+            size,
+            "memory",
+            memory_time,
+            extra=f"peak={peak_memory / 1024.0:.1f} KiB",
+        )
+
+        total_time = time.perf_counter() - structure_start
+        if self.config.show_progress:
+            print(
+                f"    [{engine_name}][N={size}] total={self._format_duration(total_time)}"
+            )
 
         return {
             "insert_time_sec": insert_time,
@@ -224,3 +288,30 @@ class PerformanceAnalyzer:
         for k, v in zip(keys, values):
             ds.insert(k, v)
         return ds
+
+    def _print_stage(self, engine_name: str, size: int, stage_name: str, duration: float, extra: str = "") -> None:
+        if not self.config.show_progress:
+            return
+
+        suffix = f" | {extra}" if extra else ""
+        print(
+            f"    [{engine_name}][N={size}] {stage_name:<15} "
+            f"{self._format_duration(duration)}{suffix}"
+        )
+
+    def _render_progress_bar(self, ratio: float) -> str:
+        width = max(10, int(self.config.progress_bar_width))
+        r = max(0.0, min(1.0, ratio))
+        filled = int(round(width * r))
+        return f"[{'#' * filled}{'.' * (width - filled)}] {r * 100:5.1f}%"
+
+    def _format_duration(self, seconds: float) -> str:
+        seconds = max(0.0, float(seconds))
+        mins, secs = divmod(seconds, 60)
+        hours, mins = divmod(mins, 60)
+
+        if hours >= 1:
+            return f"{int(hours)}h {int(mins)}m {secs:04.1f}s"
+        if mins >= 1:
+            return f"{int(mins)}m {secs:04.1f}s"
+        return f"{secs:.3f}s"

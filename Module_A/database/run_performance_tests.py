@@ -22,7 +22,8 @@ def main() -> None:
     print("=" * 80)
     print()
 
-    test_sizes = tuple(range(100, 10001, 1000))
+    # Dense sampling at smaller sizes, then coarser sampling for higher sizes.
+    test_sizes = tuple(range(100, 10100, 1000)) + tuple(range(10100, 100001, 10000))
 
     # Use absolute path based on script location
     output_dir = Path(__file__).resolve().parent / "visualizations"
