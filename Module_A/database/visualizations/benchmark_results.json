@@ -10,200 +10,381 @@
       6100,
       7100,
       8100,
-      9100
+      9100,
+      10100,
+      20100,
+      30100,
+      40100,
+      50100,
+      60100,
+      70100,
+      80100,
+      90100
     ],
     "seed": 42,
-    "bplustree_order": 4
+    "bplustree_order": 4,
+    "show_progress": true
   },
   "results": [
     {
       "size": 100,
       "bplustree": {
-        "insert_time_sec": 0.0002523000002838671,
-        "search_time_sec": 1.750000228639692e-05,
-        "delete_time_sec": 6.960000609979033e-05,
-        "range_query_time_sec": 2.8399997972883284e-05,
-        "random_workload_time_sec": 7.759999425616115e-05,
-        "peak_memory_bytes": 23672
+        "insert_time_sec": 0.000784,
+        "search_time_sec": 0.000059,
+        "delete_time_sec": 0.000244,
+        "range_query_time_sec": 0.000069,
+        "random_workload_time_sec": 0.000267,
+        "peak_memory_bytes": 21120
       },
       "bruteforce": {
-        "insert_time_sec": 0.0001390999968862161,
-        "search_time_sec": 5.429999146144837e-05,
-        "delete_time_sec": 3.060000017285347e-05,
-        "range_query_time_sec": 3.6900004488416016e-05,
-        "random_workload_time_sec": 4.939999780617654e-05,
-        "peak_memory_bytes": 1432
+        "insert_time_sec": 0.000321,
+        "search_time_sec": 0.000131,
+        "delete_time_sec": 0.000068,
+        "range_query_time_sec": 0.000104,
+        "random_workload_time_sec": 0.000243,
+        "peak_memory_bytes": 1200
       }
     },
     {
       "size": 1100,
       "bplustree": {
-        "insert_time_sec": 0.0015778000088175759,
-        "search_time_sec": 0.00019379999139346182,
-        "delete_time_sec": 0.0007400999893434346,
-        "range_query_time_sec": 0.00031489999673794955,
-        "random_workload_time_sec": 0.001487400004407391,
-        "peak_memory_bytes": 246592
+        "insert_time_sec": 0.010674,
+        "search_time_sec": 0.00078,
+        "delete_time_sec": 0.004986,
+        "range_query_time_sec": 0.001041,
+        "random_workload_time_sec": 0.006101,
+        "peak_memory_bytes": 261216
       },
       "bruteforce": {
-        "insert_time_sec": 0.01753610000014305,
-        "search_time_sec": 0.005152900004759431,
-        "delete_time_sec": 0.0033396000071661547,
-        "range_query_time_sec": 0.0003919000009773299,
-        "random_workload_time_sec": 0.002074399992125109,
-        "peak_memory_bytes": 9368
+        "insert_time_sec": 0.040418,
+        "search_time_sec": 0.015349,
+        "delete_time_sec": 0.007521,
+        "range_query_time_sec": 0.0009,
+        "random_workload_time_sec": 0.005092,
+        "peak_memory_bytes": 9367
       }
     },
     {
       "size": 2100,
       "bplustree": {
-        "insert_time_sec": 0.00310689999605529,
-        "search_time_sec": 0.000371600006474182,
-        "delete_time_sec": 0.0014463000115938485,
-        "range_query_time_sec": 0.0004532000020844862,
-        "random_workload_time_sec": 0.0036975999973947182,
-        "peak_memory_bytes": 470536
+        "insert_time_sec": 0.012121,
+        "search_time_sec": 0.001498,
+        "delete_time_sec": 0.006635,
+        "range_query_time_sec": 0.00142,
+        "random_workload_time_sec": 0.015716,
+        "peak_memory_bytes": 502352
       },
       "bruteforce": {
-        "insert_time_sec": 0.062111699997331016,
-        "search_time_sec": 0.019397500000195578,
-        "delete_time_sec": 0.012080700005753897,
-        "range_query_time_sec": 0.0008250000100815669,
-        "random_workload_time_sec": 0.007842999999411404,
-        "peak_memory_bytes": 24400
+        "insert_time_sec": 0.151741,
+        "search_time_sec": 0.054723,
+        "delete_time_sec": 0.076867,
+        "range_query_time_sec": 0.001722,
+        "random_workload_time_sec": 0.020319,
+        "peak_memory_bytes": 24727
       }
     },
     {
       "size": 3100,
       "bplustree": {
-        "insert_time_sec": 0.0048476000083610415,
-        "search_time_sec": 0.0006781999982194975,
-        "delete_time_sec": 0.0024224000080721453,
-        "range_query_time_sec": 0.0007036000024527311,
-        "random_workload_time_sec": 0.007953099993756041,
-        "peak_memory_bytes": 700296
+        "insert_time_sec": 0.038839,
+        "search_time_sec": 0.002995,
+        "delete_time_sec": 0.016853,
+        "range_query_time_sec": 0.00549,
+        "random_workload_time_sec": 0.042602,
+        "peak_memory_bytes": 751416
       },
       "bruteforce": {
-        "insert_time_sec": 0.1415928999922471,
-        "search_time_sec": 0.04096399999980349,
-        "delete_time_sec": 0.026247000001603737,
-        "range_query_time_sec": 0.0012473000097088516,
-        "random_workload_time_sec": 0.02155609999317676,
-        "peak_memory_bytes": 88152
+        "insert_time_sec": 0.415844,
+        "search_time_sec": 0.123246,
+        "delete_time_sec": 0.06721,
+        "range_query_time_sec": 0.003423,
+        "random_workload_time_sec": 0.065358,
+        "peak_memory_bytes": 88890
       }
     },
     {
       "size": 4100,
       "bplustree": {
-        "insert_time_sec": 0.006846800009952858,
-        "search_time_sec": 0.0009034999966388568,
-        "delete_time_sec": 0.003997899999376386,
-        "range_query_time_sec": 0.0014660000015283003,
-        "random_workload_time_sec": 0.01214609999442473,
-        "peak_memory_bytes": 920440
+        "insert_time_sec": 0.028341,
+        "search_time_sec": 0.003301,
+        "delete_time_sec": 0.013301,
+        "range_query_time_sec": 0.002908,
+        "random_workload_time_sec": 0.041055,
+        "peak_memory_bytes": 990576
       },
       "bruteforce": {
-        "insert_time_sec": 0.2462602000014158,
-        "search_time_sec": 0.07282410000334494,
-        "delete_time_sec": 0.045397100009722635,
-        "range_query_time_sec": 0.0017414000030839816,
-        "random_workload_time_sec": 0.02772170001117047,
-        "peak_memory_bytes": 151120
+        "insert_time_sec": 0.645934,
+        "search_time_sec": 0.26348,
+        "delete_time_sec": 0.155222,
+        "range_query_time_sec": 0.003234,
+        "random_workload_time_sec": 0.07774,
+        "peak_memory_bytes": 152905
       }
     },
     {
       "size": 5100,
       "bplustree": {
-        "insert_time_sec": 0.008140999998431653,
-        "search_time_sec": 0.001061399991158396,
-        "delete_time_sec": 0.004109299989067949,
-        "range_query_time_sec": 0.0012910999939776957,
-        "random_workload_time_sec": 0.016507499996805564,
-        "peak_memory_bytes": 1148360
+        "insert_time_sec": 0.035115,
+        "search_time_sec": 0.00428,
+        "delete_time_sec": 0.021552,
+        "range_query_time_sec": 0.005242,
+        "random_workload_time_sec": 0.11654,
+        "peak_memory_bytes": 1235656
       },
       "bruteforce": {
-        "insert_time_sec": 0.37597500000265427,
-        "search_time_sec": 0.11636129999533296,
-        "delete_time_sec": 0.0751596000045538,
-        "range_query_time_sec": 0.0021179000032134354,
-        "random_workload_time_sec": 0.05742080000345595,
-        "peak_memory_bytes": 215952
+        "insert_time_sec": 1.116194,
+        "search_time_sec": 0.404044,
+        "delete_time_sec": 0.213928,
+        "range_query_time_sec": 0.004286,
+        "random_workload_time_sec": 0.142482,
+        "peak_memory_bytes": 217208
       }
     },
     {
       "size": 6100,
       "bplustree": {
-        "insert_time_sec": 0.010474900002009235,
-        "search_time_sec": 0.001388699995004572,
-        "delete_time_sec": 0.005077699999674223,
-        "range_query_time_sec": 0.001684000002569519,
-        "random_workload_time_sec": 0.022112999999080785,
-        "peak_memory_bytes": 1378528
+        "insert_time_sec": 0.056881,
+        "search_time_sec": 0.005289,
+        "delete_time_sec": 0.031943,
+        "range_query_time_sec": 0.009483,
+        "random_workload_time_sec": 0.086149,
+        "peak_memory_bytes": 1483752
       },
       "bruteforce": {
-        "insert_time_sec": 0.5474009000026854,
-        "search_time_sec": 0.15588299999944866,
-        "delete_time_sec": 0.10573479998856783,
-        "range_query_time_sec": 0.0025125999964075163,
-        "random_workload_time_sec": 0.07456730000558309,
-        "peak_memory_bytes": 283152
+        "insert_time_sec": 1.634432,
+        "search_time_sec": 0.513042,
+        "delete_time_sec": 0.268425,
+        "range_query_time_sec": 0.005703,
+        "random_workload_time_sec": 0.206582,
+        "peak_memory_bytes": 432912
       }
     },
     {
       "size": 7100,
       "bplustree": {
-        "insert_time_sec": 0.01258840000082273,
-        "search_time_sec": 0.0016439000028185546,
-        "delete_time_sec": 0.006519999995362014,
-        "range_query_time_sec": 0.0017920000100275502,
-        "random_workload_time_sec": 0.02775870000186842,
-        "peak_memory_bytes": 1603048
+        "insert_time_sec": 0.050657,
+        "search_time_sec": 0.006213,
+        "delete_time_sec": 0.028261,
+        "range_query_time_sec": 0.059463,
+        "random_workload_time_sec": 0.100849,
+        "peak_memory_bytes": 1726792
       },
       "bruteforce": {
-        "insert_time_sec": 0.7391307999932906,
-        "search_time_sec": 0.2049191999976756,
-        "delete_time_sec": 0.14179470000090078,
-        "range_query_time_sec": 0.0030051999929128215,
-        "random_workload_time_sec": 0.09794959999271668,
-        "peak_memory_bytes": 345808
+        "insert_time_sec": 1.929947,
+        "search_time_sec": 0.697443,
+        "delete_time_sec": 0.350883,
+        "range_query_time_sec": 0.007175,
+        "random_workload_time_sec": 0.273538,
+        "peak_memory_bytes": 495776
       }
     },
     {
       "size": 8100,
       "bplustree": {
-        "insert_time_sec": 0.01344049999897834,
-        "search_time_sec": 0.0017515999934403226,
-        "delete_time_sec": 0.006931900003110059,
-        "range_query_time_sec": 0.002594899997347966,
-        "random_workload_time_sec": 0.03572310000890866,
-        "peak_memory_bytes": 1823760
+        "insert_time_sec": 0.060691,
+        "search_time_sec": 0.008578,
+        "delete_time_sec": 0.033031,
+        "range_query_time_sec": 0.010395,
+        "random_workload_time_sec": 0.135957,
+        "peak_memory_bytes": 1968904
       },
       "bruteforce": {
-        "insert_time_sec": 0.9775964000000386,
-        "search_time_sec": 0.26682309999887366,
-        "delete_time_sec": 0.1864034000027459,
-        "range_query_time_sec": 0.003828300003078766,
-        "random_workload_time_sec": 0.13508970000839327,
-        "peak_memory_bytes": 409296
+        "insert_time_sec": 2.872729,
+        "search_time_sec": 1.034236,
+        "delete_time_sec": 0.629912,
+        "range_query_time_sec": 0.009104,
+        "random_workload_time_sec": 0.386345,
+        "peak_memory_bytes": 559560
       }
     },
     {
       "size": 9100,
       "bplustree": {
-        "insert_time_sec": 0.015758099994855,
-        "search_time_sec": 0.002188500002375804,
-        "delete_time_sec": 0.008521900002961047,
-        "range_query_time_sec": 0.0032033999887062237,
-        "random_workload_time_sec": 0.04188770000473596,
-        "peak_memory_bytes": 2051784
+        "insert_time_sec": 0.079391,
+        "search_time_sec": 0.008634,
+        "delete_time_sec": 0.040077,
+        "range_query_time_sec": 0.011895,
+        "random_workload_time_sec": 0.164494,
+        "peak_memory_bytes": 2217535
       },
       "bruteforce": {
-        "insert_time_sec": 1.209122699990985,
-        "search_time_sec": 0.33880019999924116,
-        "delete_time_sec": 0.23232809999899473,
-        "range_query_time_sec": 0.003920100003597327,
-        "random_workload_time_sec": 0.15141869999933988,
-        "peak_memory_bytes": 473744
+        "insert_time_sec": 6.208906,
+        "search_time_sec": 4.407791,
+        "delete_time_sec": 2.198562,
+        "range_query_time_sec": 0.008148,
+        "random_workload_time_sec": 0.379949,
+        "peak_memory_bytes": 624304
+      }
+    },
+    {
+      "size": 10100,
+      "bplustree": {
+        "insert_time_sec": 0.024,
+        "search_time_sec": 0.003,
+        "delete_time_sec": 0.016,
+        "range_query_time_sec": 0.004,
+        "random_workload_time_sec": 0.071,
+        "peak_memory_bytes": 2280448
+      },
+      "bruteforce": {
+        "insert_time_sec": 2.035,
+        "search_time_sec": 0.617,
+        "delete_time_sec": 0.416,
+        "range_query_time_sec": 0.006,
+        "random_workload_time_sec": 0.281,
+        "peak_memory_bytes": 539443
+      }
+    },
+    {
+      "size": 20100,
+      "bplustree": {
+        "insert_time_sec": 0.069,
+        "search_time_sec": 0.006,
+        "delete_time_sec": 0.029,
+        "range_query_time_sec": 0.009,
+        "random_workload_time_sec": 0.261,
+        "peak_memory_bytes": 4509798
+      },
+      "bruteforce": {
+        "insert_time_sec": 8.479,
+        "search_time_sec": 2.412,
+        "delete_time_sec": 1.475,
+        "range_query_time_sec": 0.013,
+        "random_workload_time_sec": 1.106,
+        "peak_memory_bytes": 1187226
+      }
+    },
+    {
+      "size": 30100,
+      "bplustree": {
+        "insert_time_sec": 0.135,
+        "search_time_sec": 0.018,
+        "delete_time_sec": 0.09,
+        "range_query_time_sec": 0.031,
+        "random_workload_time_sec": 0.717,
+        "peak_memory_bytes": 6779597
+      },
+      "bruteforce": {
+        "insert_time_sec": 22.891,
+        "search_time_sec": 16.353,
+        "delete_time_sec": 5.134,
+        "range_query_time_sec": 0.032,
+        "random_workload_time_sec": 3.619,
+        "peak_memory_bytes": 1820774
+      }
+    },
+    {
+      "size": 40100,
+      "bplustree": {
+        "insert_time_sec": 0.191,
+        "search_time_sec": 0.026,
+        "delete_time_sec": 0.107,
+        "range_query_time_sec": 0.09,
+        "random_workload_time_sec": 1.335,
+        "peak_memory_bytes": 9027584
+      },
+      "bruteforce": {
+        "insert_time_sec": 129.2,
+        "search_time_sec": 16.776,
+        "delete_time_sec": 8.463,
+        "range_query_time_sec": 0.032,
+        "random_workload_time_sec": 6.204,
+        "peak_memory_bytes": 2485248
+      }
+    },
+    {
+      "size": 50100,
+      "bplustree": {
+        "insert_time_sec": 0.241,
+        "search_time_sec": 0.025,
+        "delete_time_sec": 0.105,
+        "range_query_time_sec": 0.095,
+        "random_workload_time_sec": 1.688,
+        "peak_memory_bytes": 11273728
+      },
+      "bruteforce": {
+        "insert_time_sec": 84.2,
+        "search_time_sec": 24.309,
+        "delete_time_sec": 11.544,
+        "range_query_time_sec": 0.04,
+        "random_workload_time_sec": 8.2,
+        "peak_memory_bytes": 3138560
+      }
+    },
+    {
+      "size": 60100,
+      "bplustree": {
+        "insert_time_sec": 0.3,
+        "search_time_sec": 0.042,
+        "delete_time_sec": 0.136,
+        "range_query_time_sec": 0.055,
+        "random_workload_time_sec": 2.476,
+        "peak_memory_bytes": 13567898
+      },
+      "bruteforce": {
+        "insert_time_sec": 106.2,
+        "search_time_sec": 41.053,
+        "delete_time_sec": 26.754,
+        "range_query_time_sec": 0.058,
+        "random_workload_time_sec": 13.322,
+        "peak_memory_bytes": 3754086
+      }
+    },
+    {
+      "size": 70100,
+      "bplustree": {
+        "insert_time_sec": 0.375044299999999,
+        "search_time_sec": 0.04360180000000469,
+        "delete_time_sec": 0.16295329999999808,
+        "range_query_time_sec": 0.06133239999999773,
+        "random_workload_time_sec": 3.677320299999991,
+        "peak_memory_bytes": 15793912
+      },
+      "bruteforce": {
+        "insert_time_sec": 158.1564879,
+        "search_time_sec": 45.730510899999956,
+        "delete_time_sec": 23.763614099999927,
+        "range_query_time_sec": 0.1894299000000501,
+        "random_workload_time_sec": 72.69786690000001,
+        "peak_memory_bytes": 4376760
+      }
+    },
+    {
+      "size": 80100,
+      "bplustree": {
+        "insert_time_sec": 0.4630965000001197,
+        "search_time_sec": 0.04849259999991773,
+        "delete_time_sec": 0.20407680000016626,
+        "range_query_time_sec": 0.17677239999966332,
+        "random_workload_time_sec": 4.140676600000006,
+        "peak_memory_bytes": 18053464
+      },
+      "bruteforce": {
+        "insert_time_sec": 163.6996365,
+        "search_time_sec": 62.164131400000315,
+        "delete_time_sec": 29.15457379999998,
+        "range_query_time_sec": 0.07159320000027947,
+        "random_workload_time_sec": 21.198698400000012,
+        "peak_memory_bytes": 5086176
+      }
+    },
+    {
+      "size": 90100,
+      "bplustree": {
+        "insert_time_sec": 0.46461729999919044,
+        "search_time_sec": 0.058391800000208605,
+        "delete_time_sec": 0.24923459999990882,
+        "range_query_time_sec": 0.1920578999997815,
+        "random_workload_time_sec": 5.617358700000295,
+        "peak_memory_bytes": 20326792
+      },
+      "bruteforce": {
+        "insert_time_sec": 249.24427090000063,
+        "search_time_sec": 111.65300859999934,
+        "delete_time_sec": 49.000305300000036,
+        "range_query_time_sec": 0.08089589999963209,
+        "random_workload_time_sec": 26.325334699999985,
+        "peak_memory_bytes": 5735144
       }
     }
   ]
