@@ -17,34 +17,34 @@
       "indexes_enabled": false,
       "sql_ms": {
         "list_posts": {
-          "avg_ms": 6.158,
-          "median_ms": 4.938,
-          "p95_ms": 10.303,
-          "min_ms": 3.418,
-          "max_ms": 10.624
+          "avg_ms": 6.33,
+          "median_ms": 4.934,
+          "p95_ms": 10.773,
+          "min_ms": 3.441,
+          "max_ms": 11.655
         },
         "list_comments": {
-          "avg_ms": 22.729,
-          "median_ms": 22.537,
-          "p95_ms": 24.1,
-          "min_ms": 21.209,
-          "max_ms": 25.135
+          "avg_ms": 36.942,
+          "median_ms": 35.271,
+          "p95_ms": 48.826,
+          "min_ms": 25.331,
+          "max_ms": 60.615
         }
       },
       "api_ms": {
         "list_posts": {
-          "avg_ms": 37.984,
-          "median_ms": 37.862,
-          "p95_ms": 50.386,
-          "min_ms": 17.32,
-          "max_ms": 59.198
+          "avg_ms": 39.049,
+          "median_ms": 38.3,
+          "p95_ms": 57.176,
+          "min_ms": 14.969,
+          "max_ms": 60.502
         },
         "list_comments": {
-          "avg_ms": 92.428,
-          "median_ms": 94.252,
-          "p95_ms": 109.027,
-          "min_ms": 62.975,
-          "max_ms": 115.476
+          "avg_ms": 113.088,
+          "median_ms": 112.237,
+          "p95_ms": 134.287,
+          "min_ms": 81.945,
+          "max_ms": 154.565
         }
       },
       "explain": {
@@ -53,7 +53,7 @@
             "table": "p",
             "type": "ALL",
             "key": null,
-            "rows": 3021,
+            "rows": 35,
             "extra": "Using where; Using filesort"
           },
           {
@@ -67,9 +67,9 @@
         "list_comments": [
           {
             "table": "c",
-            "type": "ref",
-            "key": "idx_comment_post",
-            "rows": 2500,
+            "type": "ALL",
+            "key": null,
+            "rows": 20,
             "extra": "Using where; Using filesort"
           },
           {
@@ -87,34 +87,34 @@
       "indexes_enabled": true,
       "sql_ms": {
         "list_posts": {
-          "avg_ms": 5.452,
-          "median_ms": 4.148,
-          "p95_ms": 10.615,
-          "min_ms": 2.674,
-          "max_ms": 10.883
+          "avg_ms": 5.501,
+          "median_ms": 4.019,
+          "p95_ms": 10.444,
+          "min_ms": 2.701,
+          "max_ms": 10.979
         },
         "list_comments": {
-          "avg_ms": 19.562,
-          "median_ms": 19.204,
-          "p95_ms": 22.054,
-          "min_ms": 17.63,
-          "max_ms": 23.162
+          "avg_ms": 34.366,
+          "median_ms": 34.479,
+          "p95_ms": 41.33,
+          "min_ms": 27.897,
+          "max_ms": 42.467
         }
       },
       "api_ms": {
         "list_posts": {
-          "avg_ms": 38.659,
-          "median_ms": 41.145,
-          "p95_ms": 47.141,
-          "min_ms": 24.009,
-          "max_ms": 49.46
+          "avg_ms": 40.786,
+          "median_ms": 41.802,
+          "p95_ms": 51.295,
+          "min_ms": 24.722,
+          "max_ms": 58.88
         },
         "list_comments": {
-          "avg_ms": 88.416,
-          "median_ms": 89.307,
-          "p95_ms": 100.704,
-          "min_ms": 57.299,
-          "max_ms": 109.781
+          "avg_ms": 102.901,
+          "median_ms": 105.226,
+          "p95_ms": 127.244,
+          "min_ms": 67.742,
+          "max_ms": 138.473
         }
       },
       "explain": {
@@ -123,7 +123,7 @@
             "table": "p",
             "type": "ALL",
             "key": null,
-            "rows": 3021,
+            "rows": 35,
             "extra": "Using where; Using filesort"
           },
           {
@@ -137,10 +137,10 @@
         "list_comments": [
           {
             "table": "c",
-            "type": "range",
-            "key": "idx_comment_post_active_date",
-            "rows": 2500,
-            "extra": "Using index condition"
+            "type": "ALL",
+            "key": null,
+            "rows": 20,
+            "extra": "Using where; Using filesort"
           },
           {
             "table": "m",
@@ -154,9 +154,9 @@
     }
   ],
   "speedup": {
-    "posts_sql_speedup": 1.129,
-    "comments_sql_speedup": 1.162,
-    "posts_api_speedup": 0.983,
-    "comments_api_speedup": 1.045
+    "posts_sql_speedup": 1.151,
+    "comments_sql_speedup": 1.075,
+    "posts_api_speedup": 0.957,
+    "comments_api_speedup": 1.099
   }
 }

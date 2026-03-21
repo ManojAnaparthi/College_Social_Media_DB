@@ -270,22 +270,12 @@ Schema location: `Module_B/sql/schema.sql`
 ### Latest measured impact
 
 - SQL speedup:
-  - posts: `1.129x`
-  - comments: `1.162x`
+  - posts: `1.151x`
+  - comments: `1.075x`
 - API speedup:
-  - posts: `0.983x`
-  - comments: `1.045x`
+  - posts: `0.957x`
+  - comments: `1.099x`
 
-### EXPLAIN plan change proof (comments endpoint)
-
-- Before:
-  - key: `idx_comment_post`
-  - extra: `Using where; Using filesort`
-- After:
-  - key: `idx_comment_post_active_date`
-  - extra: `Using index condition`
-
-This demonstrates a direct plan change for the comments hotspot after applying the composite index.
 
 4. Open UI:
 
