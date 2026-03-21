@@ -1,11 +1,13 @@
+import os
+from typing import Any
+
 import pymysql
 from pymysql.cursors import DictCursor
-import os
 
 # Database configuration - in a real app, use environment variables
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_USER = os.getenv("DB_USER", "root")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "Chaitu@2006")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "password")
 DB_NAME = os.getenv("DB_NAME", "college_social_media")
 
 
@@ -27,7 +29,7 @@ def get_db_connection():
     )
     return connection
 
-def execute_query(query, params=None, fetchall=False, fetchone=False):
+def execute_query(query, params=None, fetchall=False, fetchone=False, audit_context: dict[str, Any] | None = None):
     """
     Helper function to safely execute SQL queries.
     """
@@ -35,6 +37,24 @@ def execute_query(query, params=None, fetchall=False, fetchone=False):
     try:
         conn = get_db_connection()
         with conn.cursor() as cursor:
+            if audit_context is not None:
+                cursor.execute(
+                    """
+                    SET
+                        @api_authorized = %s,
+                        @api_actor_id = %s,
+                        @api_action = %s,
+                        @api_endpoint = %s,
+                        @api_method = %s
+                    """,
+                    (
+                        1,
+                        audit_context.get("actor_id"),
+                        audit_context.get("action"),
+                        audit_context.get("endpoint"),
+                        audit_context.get("method"),
+                    ),
+                )
             cursor.execute(query, params)
             if fetchall:
                 return cursor.fetchall()

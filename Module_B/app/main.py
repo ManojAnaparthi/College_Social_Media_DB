@@ -19,7 +19,10 @@ ALGORITHM = "HS256"
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
-AUDIT_LOG_PATH = os.path.join(os.path.dirname(__file__), "audit.log")
+MODULE_B_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+LOG_DIR = os.path.join(MODULE_B_DIR, "logs")
+os.makedirs(LOG_DIR, exist_ok=True)
+AUDIT_LOG_PATH = os.path.join(LOG_DIR, "audit.log")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
@@ -112,6 +115,15 @@ def _audit_log(
         "details": details,
     }
     _append_audit_entry(entry)
+
+
+def _db_audit_context(*, action: str, current_user: dict, request: Request) -> dict:
+    return {
+        "actor_id": current_user.get("member_id"),
+        "action": action,
+        "endpoint": str(request.url.path),
+        "method": request.method,
+    }
 
 
 def _require_admin(request: Request, current_user: dict) -> None:
@@ -338,7 +350,11 @@ def update_portfolio(
     params.append(member_id)
     
     # 3. Execute the update
-    execute_query(query, tuple(params))
+    execute_query(
+        query,
+        tuple(params),
+        audit_context=_db_audit_context(action="portfolio_update", current_user=current_user, request=request),
+    )
     _audit_log(
         action="portfolio_update",
         actor_id=current_user.get("member_id"),
@@ -373,6 +389,7 @@ def create_post(post_data: PostCreate, request: Request, current_user: dict = De
     new_post_id = execute_query(
         query,
         (member_id, post_data.content.strip(), post_data.media_url, post_data.media_type, post_data.visibility),
+        audit_context=_db_audit_context(action="post_create", current_user=current_user, request=request),
     )
     _audit_log(
         action="post_create",
@@ -493,6 +510,7 @@ def create_comment(
         VALUES (%s, %s, %s)
         """,
         (post_id, member_id, comment_data.content.strip()),
+        audit_context=_db_audit_context(action="comment_create", current_user=current_user, request=request),
     )
     _audit_log(
         action="comment_create",
@@ -586,6 +604,7 @@ def update_comment(
         WHERE CommentID = %s
         """,
         (update_data.content.strip(), comment_id),
+        audit_context=_db_audit_context(action="comment_update", current_user=current_user, request=request),
     )
     _audit_log(
         action="comment_update",
@@ -631,7 +650,11 @@ def delete_comment(comment_id: int, request: Request, current_user: dict = Depen
         )
         raise HTTPException(status_code=403, detail="You do not have permission to delete this comment")
 
-    execute_query("UPDATE Comment SET IsActive = FALSE WHERE CommentID = %s", (comment_id,))
+    execute_query(
+        "UPDATE Comment SET IsActive = FALSE WHERE CommentID = %s",
+        (comment_id,),
+        audit_context=_db_audit_context(action="comment_delete", current_user=current_user, request=request),
+    )
     _audit_log(
         action="comment_delete",
         actor_id=member_id,
@@ -700,7 +723,11 @@ def update_post(post_id: int, update_data: PostUpdate, request: Request, current
     updates.append("LastEditDate = CURRENT_TIMESTAMP")
     query = f"UPDATE Post SET {', '.join(updates)} WHERE PostID = %s"
     params.append(post_id)
-    execute_query(query, tuple(params))
+    execute_query(
+        query,
+        tuple(params),
+        audit_context=_db_audit_context(action="post_update", current_user=current_user, request=request),
+    )
     _audit_log(
         action="post_update",
         actor_id=member_id,
@@ -745,7 +772,11 @@ def delete_post(post_id: int, request: Request, current_user: dict = Depends(ver
         )
         raise HTTPException(status_code=403, detail="You do not have permission to delete this post")
 
-    execute_query("UPDATE Post SET IsActive = FALSE WHERE PostID = %s", (post_id,))
+    execute_query(
+        "UPDATE Post SET IsActive = FALSE WHERE PostID = %s",
+        (post_id,),
+        audit_context=_db_audit_context(action="post_delete", current_user=current_user, request=request),
+    )
     _audit_log(
         action="post_delete",
         actor_id=member_id,
@@ -797,6 +828,7 @@ def create_member_admin(payload: AdminMemberCreate, request: Request, current_us
             payload.department.strip(),
             payload.bio,
         ),
+        audit_context=_db_audit_context(action="admin_member_create", current_user=current_user, request=request),
     )
     password_hash = pwd_context.hash(payload.password)
     execute_query(
@@ -805,6 +837,7 @@ def create_member_admin(payload: AdminMemberCreate, request: Request, current_us
         VALUES (%s, %s, 'bcrypt')
         """,
         (member_id, password_hash),
+        audit_context=_db_audit_context(action="admin_member_create", current_user=current_user, request=request),
     )
     _audit_log(
         action="admin_member_create",
@@ -829,7 +862,11 @@ def delete_member_admin(member_id: int, request: Request, current_user: dict = D
     if not member:
         raise HTTPException(status_code=404, detail="Member not found")
 
-    execute_query("DELETE FROM Member WHERE MemberID = %s", (member_id,))
+    execute_query(
+        "DELETE FROM Member WHERE MemberID = %s",
+        (member_id,),
+        audit_context=_db_audit_context(action="admin_member_delete", current_user=current_user, request=request),
+    )
     _audit_log(
         action="admin_member_delete",
         actor_id=current_user.get("member_id"),
@@ -879,6 +916,7 @@ def add_group_member_admin(
             WHERE GroupID = %s AND MemberID = %s
             """,
             (payload.role, group_id, payload.member_id),
+            audit_context=_db_audit_context(action="admin_group_member_add", current_user=current_user, request=request),
         )
     else:
         execute_query(
@@ -887,6 +925,7 @@ def add_group_member_admin(
             VALUES (%s, %s, %s, TRUE)
             """,
             (group_id, payload.member_id, payload.role),
+            audit_context=_db_audit_context(action="admin_group_member_add", current_user=current_user, request=request),
         )
 
     _audit_log(
@@ -924,6 +963,7 @@ def remove_group_member_admin(
     execute_query(
         "UPDATE GroupMember SET IsActive = FALSE WHERE GroupID = %s AND MemberID = %s",
         (group_id, member_id),
+        audit_context=_db_audit_context(action="admin_group_member_remove", current_user=current_user, request=request),
     )
     _audit_log(
         action="admin_group_member_remove",
@@ -969,5 +1009,38 @@ def get_audit_log(
         "message": "Audit entries retrieved successfully",
         "count": len(data),
         "data": data,
+        "log_path": AUDIT_LOG_PATH,
         "note": "Any DB change with no matching API audit record should be treated as unauthorized direct modification.",
+    }
+
+
+@app.get("/admin/db-change-log")
+def get_db_change_log(
+    request: Request,
+    unauthorized_only: bool = Query(default=False),
+    limit: int = Query(default=100, ge=1, le=1000),
+    current_user: dict = Depends(verify_session_token),
+):
+    """Admin-only: read DB-level write trace to identify direct unauthorized modifications."""
+    _require_admin(request, current_user)
+
+    where_clause = "WHERE IsAuthorized = FALSE" if unauthorized_only else ""
+    rows = execute_query(
+        f"""
+        SELECT LogID, TableName, OperationType, RecordID, ActorMemberID, SourceType,
+               IsAuthorized, ActionName, Endpoint, HttpMethod, ChangeTime, Details
+        FROM ApiWriteLog
+        {where_clause}
+        ORDER BY ChangeTime DESC
+        LIMIT %s
+        """,
+        (limit,),
+        fetchall=True,
+    )
+
+    return {
+        "message": "DB change log retrieved successfully",
+        "count": len(rows),
+        "unauthorized_only": unauthorized_only,
+        "data": rows,
     }

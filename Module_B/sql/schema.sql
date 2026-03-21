@@ -236,6 +236,26 @@ CREATE TABLE ActivityLog (
 );
 
 -- ============================================================================
+-- Table 12: ApiWriteLog
+-- Tracks all DB write operations and distinguishes API-authorized writes from
+-- direct database modifications.
+-- ============================================================================
+CREATE TABLE ApiWriteLog (
+    LogID INT PRIMARY KEY AUTO_INCREMENT,
+    TableName VARCHAR(50) NOT NULL,
+    OperationType ENUM('INSERT', 'UPDATE', 'DELETE') NOT NULL,
+    RecordID VARCHAR(64),
+    ActorMemberID INT,
+    SourceType ENUM('API', 'DIRECT_DB') NOT NULL,
+    IsAuthorized BOOLEAN NOT NULL,
+    ActionName VARCHAR(100),
+    Endpoint VARCHAR(255),
+    HttpMethod VARCHAR(10),
+    ChangeTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Details TEXT
+);
+
+-- ============================================================================
 -- Indexes for Performance Optimization
 -- ============================================================================
 CREATE INDEX idx_member_role ON Member(Role);
@@ -251,6 +271,8 @@ CREATE INDEX idx_message_receiver ON Message(ReceiverID);
 CREATE INDEX idx_notification_member ON Notification(MemberID);
 CREATE INDEX idx_activitylog_member ON ActivityLog(MemberID);
 CREATE INDEX idx_activitylog_timestamp ON ActivityLog(`Timestamp` DESC);
+CREATE INDEX idx_apiwritelog_time ON ApiWriteLog(ChangeTime DESC);
+CREATE INDEX idx_apiwritelog_auth ON ApiWriteLog(IsAuthorized, SourceType);
 
 -- ============================================================================
 -- TRIGGERS for Business Rule Enforcement
@@ -341,6 +363,294 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Non-pending reports must have a reviewer assigned';
     END IF;
+END//
+DELIMITER ;
+
+-- Trigger 7: Track Post INSERT source (API vs direct DB)
+DELIMITER //
+CREATE TRIGGER trg_apiwritelog_post_insert
+AFTER INSERT ON Post
+FOR EACH ROW
+BEGIN
+    INSERT INTO ApiWriteLog
+        (TableName, OperationType, RecordID, ActorMemberID, SourceType, IsAuthorized, ActionName, Endpoint, HttpMethod, Details)
+    VALUES
+        (
+            'Post',
+            'INSERT',
+            CAST(NEW.PostID AS CHAR),
+            COALESCE(@api_actor_id, NEW.MemberID),
+            IF(@api_authorized = 1, 'API', 'DIRECT_DB'),
+            IF(@api_authorized = 1, TRUE, FALSE),
+            @api_action,
+            @api_endpoint,
+            @api_method,
+            CONCAT('Post insert by MemberID=', NEW.MemberID)
+        );
+END//
+DELIMITER ;
+
+-- Trigger 8: Track Post UPDATE source (API vs direct DB)
+DELIMITER //
+CREATE TRIGGER trg_apiwritelog_post_update
+AFTER UPDATE ON Post
+FOR EACH ROW
+BEGIN
+    INSERT INTO ApiWriteLog
+        (TableName, OperationType, RecordID, ActorMemberID, SourceType, IsAuthorized, ActionName, Endpoint, HttpMethod, Details)
+    VALUES
+        (
+            'Post',
+            'UPDATE',
+            CAST(NEW.PostID AS CHAR),
+            COALESCE(@api_actor_id, NEW.MemberID),
+            IF(@api_authorized = 1, 'API', 'DIRECT_DB'),
+            IF(@api_authorized = 1, TRUE, FALSE),
+            @api_action,
+            @api_endpoint,
+            @api_method,
+            CONCAT('Post update by MemberID=', NEW.MemberID)
+        );
+END//
+DELIMITER ;
+
+-- Trigger 9: Track Post DELETE source (API vs direct DB)
+DELIMITER //
+CREATE TRIGGER trg_apiwritelog_post_delete
+AFTER DELETE ON Post
+FOR EACH ROW
+BEGIN
+    INSERT INTO ApiWriteLog
+        (TableName, OperationType, RecordID, ActorMemberID, SourceType, IsAuthorized, ActionName, Endpoint, HttpMethod, Details)
+    VALUES
+        (
+            'Post',
+            'DELETE',
+            CAST(OLD.PostID AS CHAR),
+            COALESCE(@api_actor_id, OLD.MemberID),
+            IF(@api_authorized = 1, 'API', 'DIRECT_DB'),
+            IF(@api_authorized = 1, TRUE, FALSE),
+            @api_action,
+            @api_endpoint,
+            @api_method,
+            CONCAT('Post delete by MemberID=', OLD.MemberID)
+        );
+END//
+DELIMITER ;
+
+-- Trigger 10: Track Comment INSERT source (API vs direct DB)
+DELIMITER //
+CREATE TRIGGER trg_apiwritelog_comment_insert
+AFTER INSERT ON Comment
+FOR EACH ROW
+BEGIN
+    INSERT INTO ApiWriteLog
+        (TableName, OperationType, RecordID, ActorMemberID, SourceType, IsAuthorized, ActionName, Endpoint, HttpMethod, Details)
+    VALUES
+        (
+            'Comment',
+            'INSERT',
+            CAST(NEW.CommentID AS CHAR),
+            COALESCE(@api_actor_id, NEW.MemberID),
+            IF(@api_authorized = 1, 'API', 'DIRECT_DB'),
+            IF(@api_authorized = 1, TRUE, FALSE),
+            @api_action,
+            @api_endpoint,
+            @api_method,
+            CONCAT('Comment insert by MemberID=', NEW.MemberID)
+        );
+END//
+DELIMITER ;
+
+-- Trigger 11: Track Comment UPDATE source (API vs direct DB)
+DELIMITER //
+CREATE TRIGGER trg_apiwritelog_comment_update
+AFTER UPDATE ON Comment
+FOR EACH ROW
+BEGIN
+    INSERT INTO ApiWriteLog
+        (TableName, OperationType, RecordID, ActorMemberID, SourceType, IsAuthorized, ActionName, Endpoint, HttpMethod, Details)
+    VALUES
+        (
+            'Comment',
+            'UPDATE',
+            CAST(NEW.CommentID AS CHAR),
+            COALESCE(@api_actor_id, NEW.MemberID),
+            IF(@api_authorized = 1, 'API', 'DIRECT_DB'),
+            IF(@api_authorized = 1, TRUE, FALSE),
+            @api_action,
+            @api_endpoint,
+            @api_method,
+            CONCAT('Comment update by MemberID=', NEW.MemberID)
+        );
+END//
+DELIMITER ;
+
+-- Trigger 12: Track Comment DELETE source (API vs direct DB)
+DELIMITER //
+CREATE TRIGGER trg_apiwritelog_comment_delete
+AFTER DELETE ON Comment
+FOR EACH ROW
+BEGIN
+    INSERT INTO ApiWriteLog
+        (TableName, OperationType, RecordID, ActorMemberID, SourceType, IsAuthorized, ActionName, Endpoint, HttpMethod, Details)
+    VALUES
+        (
+            'Comment',
+            'DELETE',
+            CAST(OLD.CommentID AS CHAR),
+            COALESCE(@api_actor_id, OLD.MemberID),
+            IF(@api_authorized = 1, 'API', 'DIRECT_DB'),
+            IF(@api_authorized = 1, TRUE, FALSE),
+            @api_action,
+            @api_endpoint,
+            @api_method,
+            CONCAT('Comment delete by MemberID=', OLD.MemberID)
+        );
+END//
+DELIMITER ;
+
+-- Trigger 13: Track Member INSERT source (API vs direct DB)
+DELIMITER //
+CREATE TRIGGER trg_apiwritelog_member_insert
+AFTER INSERT ON Member
+FOR EACH ROW
+BEGIN
+    INSERT INTO ApiWriteLog
+        (TableName, OperationType, RecordID, ActorMemberID, SourceType, IsAuthorized, ActionName, Endpoint, HttpMethod, Details)
+    VALUES
+        (
+            'Member',
+            'INSERT',
+            CAST(NEW.MemberID AS CHAR),
+            @api_actor_id,
+            IF(@api_authorized = 1, 'API', 'DIRECT_DB'),
+            IF(@api_authorized = 1, TRUE, FALSE),
+            @api_action,
+            @api_endpoint,
+            @api_method,
+            CONCAT('Member insert for ', NEW.Email)
+        );
+END//
+DELIMITER ;
+
+-- Trigger 14: Track Member UPDATE source (API vs direct DB)
+DELIMITER //
+CREATE TRIGGER trg_apiwritelog_member_update
+AFTER UPDATE ON Member
+FOR EACH ROW
+BEGIN
+    INSERT INTO ApiWriteLog
+        (TableName, OperationType, RecordID, ActorMemberID, SourceType, IsAuthorized, ActionName, Endpoint, HttpMethod, Details)
+    VALUES
+        (
+            'Member',
+            'UPDATE',
+            CAST(NEW.MemberID AS CHAR),
+            COALESCE(@api_actor_id, NEW.MemberID),
+            IF(@api_authorized = 1, 'API', 'DIRECT_DB'),
+            IF(@api_authorized = 1, TRUE, FALSE),
+            @api_action,
+            @api_endpoint,
+            @api_method,
+            CONCAT('Member update for MemberID=', NEW.MemberID)
+        );
+END//
+DELIMITER ;
+
+-- Trigger 15: Track Member DELETE source (API vs direct DB)
+DELIMITER //
+CREATE TRIGGER trg_apiwritelog_member_delete
+AFTER DELETE ON Member
+FOR EACH ROW
+BEGIN
+    INSERT INTO ApiWriteLog
+        (TableName, OperationType, RecordID, ActorMemberID, SourceType, IsAuthorized, ActionName, Endpoint, HttpMethod, Details)
+    VALUES
+        (
+            'Member',
+            'DELETE',
+            CAST(OLD.MemberID AS CHAR),
+            @api_actor_id,
+            IF(@api_authorized = 1, 'API', 'DIRECT_DB'),
+            IF(@api_authorized = 1, TRUE, FALSE),
+            @api_action,
+            @api_endpoint,
+            @api_method,
+            CONCAT('Member delete for ', OLD.Email)
+        );
+END//
+DELIMITER ;
+
+-- Trigger 16: Track GroupMember INSERT source (API vs direct DB)
+DELIMITER //
+CREATE TRIGGER trg_apiwritelog_groupmember_insert
+AFTER INSERT ON GroupMember
+FOR EACH ROW
+BEGIN
+    INSERT INTO ApiWriteLog
+        (TableName, OperationType, RecordID, ActorMemberID, SourceType, IsAuthorized, ActionName, Endpoint, HttpMethod, Details)
+    VALUES
+        (
+            'GroupMember',
+            'INSERT',
+            CAST(NEW.GroupMemberID AS CHAR),
+            COALESCE(@api_actor_id, NEW.MemberID),
+            IF(@api_authorized = 1, 'API', 'DIRECT_DB'),
+            IF(@api_authorized = 1, TRUE, FALSE),
+            @api_action,
+            @api_endpoint,
+            @api_method,
+            CONCAT('GroupMember insert: group=', NEW.GroupID, ', member=', NEW.MemberID)
+        );
+END//
+DELIMITER ;
+
+-- Trigger 17: Track GroupMember UPDATE source (API vs direct DB)
+DELIMITER //
+CREATE TRIGGER trg_apiwritelog_groupmember_update
+AFTER UPDATE ON GroupMember
+FOR EACH ROW
+BEGIN
+    INSERT INTO ApiWriteLog
+        (TableName, OperationType, RecordID, ActorMemberID, SourceType, IsAuthorized, ActionName, Endpoint, HttpMethod, Details)
+    VALUES
+        (
+            'GroupMember',
+            'UPDATE',
+            CAST(NEW.GroupMemberID AS CHAR),
+            COALESCE(@api_actor_id, NEW.MemberID),
+            IF(@api_authorized = 1, 'API', 'DIRECT_DB'),
+            IF(@api_authorized = 1, TRUE, FALSE),
+            @api_action,
+            @api_endpoint,
+            @api_method,
+            CONCAT('GroupMember update: group=', NEW.GroupID, ', member=', NEW.MemberID)
+        );
+END//
+DELIMITER ;
+
+-- Trigger 18: Track GroupMember DELETE source (API vs direct DB)
+DELIMITER //
+CREATE TRIGGER trg_apiwritelog_groupmember_delete
+AFTER DELETE ON GroupMember
+FOR EACH ROW
+BEGIN
+    INSERT INTO ApiWriteLog
+        (TableName, OperationType, RecordID, ActorMemberID, SourceType, IsAuthorized, ActionName, Endpoint, HttpMethod, Details)
+    VALUES
+        (
+            'GroupMember',
+            'DELETE',
+            CAST(OLD.GroupMemberID AS CHAR),
+            COALESCE(@api_actor_id, OLD.MemberID),
+            IF(@api_authorized = 1, 'API', 'DIRECT_DB'),
+            IF(@api_authorized = 1, TRUE, FALSE),
+            @api_action,
+            @api_endpoint,
+            @api_method,
+            CONCAT('GroupMember delete: group=', OLD.GroupID, ', member=', OLD.MemberID)
+        );
 END//
 DELIMITER ;
 
