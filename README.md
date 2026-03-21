@@ -332,6 +332,7 @@ Implemented web UI pages:
 - `portfolio.html`: own portfolio + restricted member profile lookup by MemberID
 - `create-post.html`: dedicated create-post form
 - `posts.html`: dedicated all-posts listing with edit/delete controls
+  - Current behavior: loads the latest 30 posts per request (`GET /posts?limit=30&offset=0`).
 
 Session validation behavior:
 
