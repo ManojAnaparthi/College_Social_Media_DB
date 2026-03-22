@@ -266,14 +266,27 @@ setx JWT_SECRET_KEY "<your-random-secret>"
 
 ## Module B SubTask 4 and 5 (Indexing + Benchmarking)
 
-### What was corrected
+### Benchmark workflow used in report.ipynb
 
-- Benchmarking now runs interactively inside `Module_B/report.ipynb` with a strict two-stage method:
-  - `before_indexes`: drops optimization indexes that help tested endpoints.
-  - `after_indexes`: creates only targeted optimization indexes.
-- Slow benchmark targets are identified automatically from pre-index SQL timing in the notebook flow.
-- FK-support baseline indexes are kept in both stages so schema integrity is preserved.
-- Before/after comparison includes SQL timings, API timings, and EXPLAIN plan snapshots.
+- Benchmarking is executed inside `Module_B/report.ipynb` using a single consolidated workflow cell.
+- The notebook runs two comparable stages with the same parameters:
+  - `before_indexes`: optimization indexes are removed.
+  - `after_indexes`: optimization indexes are created.
+- API benchmark candidates are discovered automatically from FastAPI OpenAPI metadata.
+- Route-to-benchmark mapping is applied for assignment-scoped queries (`list_posts`, `list_comments`).
+- Each stage captures:
+  - SQL latency metrics (`avg`, `median`, `p95`, `min`, `max`)
+  - API latency metrics (`avg`, `median`, `p95`, `min`, `max`)
+  - `EXPLAIN` plan details (`type`, `key`, `rows`, `extra`)
+  - per-query `planning_ms`, `execution_ms`, and `scan_type`
+
+### Planning-time note (MySQL)
+
+- MySQL does not expose PostgreSQL-style planning time directly.
+- The report records planning as a labeled proxy metric:
+  - `planning_metric_method = "MySQL EXPLAIN wall-time proxy"`
+
+This keeps the benchmark evidence transparent and MySQL-compatible.
 
 ### Targeted indexes and API mapping
 
@@ -294,14 +307,23 @@ Schema location: `Module_B/sql/schema.sql`
 - Interactive benchmark/report notebook:
   - `Module_B/report.ipynb`
 
+The JSON includes:
+
+- benchmark parameters and discovered candidate routes (`discovery`)
+- both benchmark stages with SQL/API metrics and EXPLAIN output (`stages`)
+- computed speedups (`speedup`)
+- required before/after query metrics (`query_metrics`)
+
 ### Latest measured impact
 
 - SQL speedup:
-  - posts: `1.013x`
-  - comments: `1.134x`
+  - posts: `1.239`
+  - comments: `1.320`
 - API speedup:
-  - posts: `1.052x`
-  - comments: `1.040x`
+  - posts: `0.944`
+  - comments: `1.111`
+- The benchmark values are environment-dependent and are regenerated from the notebook run.
+- Use `Module_B/performance/index_benchmark_results.json` as the source of truth for current speedups and before/after metrics.
 
 
 4. Open UI:

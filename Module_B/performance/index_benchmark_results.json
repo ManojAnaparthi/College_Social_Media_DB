@@ -8,21 +8,39 @@
     "iterations": 40,
     "warmup": 5,
     "limit": 20,
-    "offset": 1510,
-    "comment_post_id": 3021,
+    "offset": 1512,
+    "comment_post_id": 3025,
     "auto_identified_slowest": [
       "list_comments",
       "list_posts"
     ]
   },
+  "planning_metric_method": "MySQL EXPLAIN wall-time proxy",
   "discovery": [
     {
-      "benchmark": "list_comments",
-      "sql_avg_ms": 24.073
+      "route": "/posts/{post_id}/comments",
+      "path": "/posts/3025/comments",
+      "api_avg_ms": 99.838
     },
     {
-      "benchmark": "list_posts",
-      "sql_avg_ms": 5.58
+      "route": "/posts/{post_id}",
+      "path": "/posts/3025",
+      "api_avg_ms": 50.218
+    },
+    {
+      "route": "/posts",
+      "path": "/posts?limit=20&offset=1512",
+      "api_avg_ms": 39.525
+    },
+    {
+      "route": "/members/search",
+      "path": "/members/search?q=a",
+      "api_avg_ms": 18.422
+    },
+    {
+      "route": "/isAuth",
+      "path": "/isAuth",
+      "api_avg_ms": 12.469
     }
   ],
   "stages": [
@@ -31,34 +49,34 @@
       "indexes_enabled": false,
       "sql_ms": {
         "list_posts": {
-          "avg_ms": 5.6,
-          "median_ms": 4.604,
-          "p95_ms": 10.427,
-          "min_ms": 3.176,
-          "max_ms": 10.709
+          "avg_ms": 6.164,
+          "median_ms": 4.674,
+          "p95_ms": 10.393,
+          "min_ms": 3.582,
+          "max_ms": 11.02
         },
         "list_comments": {
-          "avg_ms": 23.087,
-          "median_ms": 22.492,
-          "p95_ms": 28.352,
-          "min_ms": 20.484,
-          "max_ms": 29.759
+          "avg_ms": 26.619,
+          "median_ms": 25.744,
+          "p95_ms": 31.533,
+          "min_ms": 20.941,
+          "max_ms": 35.723
         }
       },
       "api_ms": {
         "list_posts": {
-          "avg_ms": 37.851,
-          "median_ms": 38.02,
-          "p95_ms": 48.853,
-          "min_ms": 16.582,
-          "max_ms": 58.822
+          "avg_ms": 31.097,
+          "median_ms": 30.287,
+          "p95_ms": 49.302,
+          "min_ms": 12.24,
+          "max_ms": 54.602
         },
         "list_comments": {
-          "avg_ms": 95.215,
-          "median_ms": 94.93,
-          "p95_ms": 111.688,
-          "min_ms": 74.243,
-          "max_ms": 123.965
+          "avg_ms": 89.76,
+          "median_ms": 88.968,
+          "p95_ms": 110.687,
+          "min_ms": 63.055,
+          "max_ms": 127.103
         }
       },
       "explain": {
@@ -67,7 +85,7 @@
             "table": "p",
             "type": "ALL",
             "key": null,
-            "rows": 3021,
+            "rows": 3025,
             "extra": "Using where; Using filesort"
           },
           {
@@ -105,34 +123,34 @@
       "indexes_enabled": true,
       "sql_ms": {
         "list_posts": {
-          "avg_ms": 5.528,
-          "median_ms": 4.797,
-          "p95_ms": 10.649,
-          "min_ms": 3.7,
-          "max_ms": 10.866
+          "avg_ms": 4.973,
+          "median_ms": 4.083,
+          "p95_ms": 8.794,
+          "min_ms": 2.784,
+          "max_ms": 10.482
         },
         "list_comments": {
-          "avg_ms": 20.358,
-          "median_ms": 20.137,
-          "p95_ms": 23.497,
-          "min_ms": 17.963,
-          "max_ms": 27.507
+          "avg_ms": 20.172,
+          "median_ms": 19.824,
+          "p95_ms": 22.358,
+          "min_ms": 18.274,
+          "max_ms": 23.729
         }
       },
       "api_ms": {
         "list_posts": {
-          "avg_ms": 35.997,
-          "median_ms": 36.049,
-          "p95_ms": 48.398,
-          "min_ms": 17.787,
-          "max_ms": 54.806
+          "avg_ms": 32.927,
+          "median_ms": 28.73,
+          "p95_ms": 64.326,
+          "min_ms": 10.506,
+          "max_ms": 74.219
         },
         "list_comments": {
-          "avg_ms": 91.577,
-          "median_ms": 90.377,
-          "p95_ms": 111.371,
-          "min_ms": 62.676,
-          "max_ms": 113.145
+          "avg_ms": 80.823,
+          "median_ms": 79.86,
+          "p95_ms": 102.436,
+          "min_ms": 53.572,
+          "max_ms": 104.88
         }
       },
       "explain": {
@@ -141,7 +159,7 @@
             "table": "p",
             "type": "ALL",
             "key": null,
-            "rows": 3021,
+            "rows": 3025,
             "extra": "Using where; Using filesort"
           },
           {
@@ -176,9 +194,37 @@
     }
   ],
   "speedup": {
-    "posts_sql_speedup": 1.013,
-    "comments_sql_speedup": 1.134,
-    "posts_api_speedup": 1.052,
-    "comments_api_speedup": 1.04
+    "posts_sql_speedup": 1.239,
+    "comments_sql_speedup": 1.32,
+    "posts_api_speedup": 0.944,
+    "comments_api_speedup": 1.111,
+    "posts_planning_speedup": 0.741,
+    "comments_planning_speedup": 0.907
+  },
+  "query_metrics": {
+    "GET /posts": {
+      "before": {
+        "planning_ms": 0.492,
+        "execution_ms": 6.164,
+        "scan_type": "ALL"
+      },
+      "after": {
+        "planning_ms": 0.664,
+        "execution_ms": 4.973,
+        "scan_type": "ALL"
+      }
+    },
+    "GET /posts/{post_id}/comments": {
+      "before": {
+        "planning_ms": 0.556,
+        "execution_ms": 26.619,
+        "scan_type": "ref"
+      },
+      "after": {
+        "planning_ms": 0.613,
+        "execution_ms": 20.172,
+        "scan_type": "range"
+      }
+    }
   }
 }
